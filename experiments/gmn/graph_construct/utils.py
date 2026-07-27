@@ -291,7 +291,7 @@ def norm_to_graph(gamma, beta, l, in_neuron_idx, out_neuron=False, curr_idx=0, s
     
     if self_loops:
         added_neurons = 0
-        added_x = None
+        added_x = torch.empty(0, 3, dtype=torch.long)
         weight_edges = torch.cat((out_neuron_idx[None, :],
                                   out_neuron_idx[None, :]), dim=0) # self loops
         edge_index.append(weight_edges)
@@ -495,7 +495,15 @@ def triplanar_to_graph(tgrid, l, out_neuron=False, curr_idx=0):
     spatial_neuron_idx = torch.arange(3*N*N) + 3
     feat_neuron_idx = torch.arange(dim) + 3*N*N + 3
     
-    edge_index = torch.cat([spatial_neuron_idx.repeat_interleave(dim).unsqueeze(0), feat_neuron_idx.repeat(3*N*N).unsqueeze(0)], 0)
+    # Match tgrid.flatten() channel-major order: for each of 3*dim channels,
+    # iterate over the N*N spatial positions in that channel.
+    block_idx = torch.arange(3 * dim).repeat_interleave(N * N)
+    plane = block_idx // dim
+    feat = block_idx % dim
+    pos = torch.arange(N * N).repeat(3 * dim)
+    src = spatial_neuron_idx[plane * N * N + pos]
+    dst = feat_neuron_idx[feat]
+    edge_index = torch.stack([src, dst], 0)
     
     spatial_x = make_node_feat(3*N*N, l, NODE_TYPES['triplanar'], end_neuron=True)
     neuron_x = make_node_feat(dim, l, NODE_TYPES['triplanar'], end_neuron=False)
