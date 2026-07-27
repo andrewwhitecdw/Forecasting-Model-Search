@@ -48,7 +48,7 @@ class SinPosEnc(nn.Module):
         freqs = self.freqs.to(idx) # 1 x D/2
         pe = torch.zeros(1, seq_len, self.dim, device=x.device)
         pe[0, :, 0::2] = torch.sin(idx * freqs) 
-        pe[0, :, 1::2] = torch.cos(idx * freqs) 
+        pe[0, :, 1::2] = torch.cos(idx * freqs[:pe.shape[2] // 2]) 
         if not self.dim_last:
             pe = pe.transpose(2,1) # B x N x D -> B x D x N
         return x + pe
