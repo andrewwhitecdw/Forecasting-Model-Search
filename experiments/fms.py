@@ -22,7 +22,7 @@ class ExperimentController:
     """Manages all data related to an experiment run."""
 
     def __init__(self, experiment_id, budget_limit, experiment_type, park, seed, use_cnn, use_weights):
-        # self.seed(seed)
+        self.seed(seed)
         self.budget_used = 0
         self.budget_limit = budget_limit
 
