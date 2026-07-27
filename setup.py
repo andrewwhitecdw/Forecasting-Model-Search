@@ -15,9 +15,11 @@ from setuptools import find_packages, setup
 
 def requirements():
     list_requirements = []
-    with open("requirements.txt") as f:
+    with open("requirements.txt", encoding="utf-8") as f:
         for line in f:
-            list_requirements.append(line.rstrip())
+            line = line.strip()
+            if line and not line.startswith("#"):
+                list_requirements.append(line)
     return list_requirements
 
 
