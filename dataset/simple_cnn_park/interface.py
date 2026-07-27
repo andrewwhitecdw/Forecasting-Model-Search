@@ -90,6 +90,8 @@ class SimpleCNNParkInterface:
     def get_pytorch_model(self, hp_index, epoch):
         """ Load a PyTorch model checkpoint for a specific configuration and epoch, then load the state dict into SmallCNN """
         loaded_checkpoint = self.load_checkpoint(hp_index, epoch)
+        if loaded_checkpoint is None:
+            raise FileNotFoundError(f"No checkpoint found for hp_index={hp_index}, epoch={epoch}")
         model = SmallCNN()
         model.load_state_dict(loaded_checkpoint)
         return model
@@ -206,7 +208,10 @@ class SimpleCNNParkInterface:
         best_config_key = next(iter(best_configs))  # Gets the first key in the dictionary
         best_performance = best_configs[best_config_key][metric]
 
-        regret = best_performance - best_seen_performance
+        if minimize:
+            regret = best_seen_performance - best_performance
+        else:
+            regret = best_performance - best_seen_performance
         return regret
 
     def get_ground_truth_rankings(self, metric='test_accuracy', epoch=None, minimize=False):
