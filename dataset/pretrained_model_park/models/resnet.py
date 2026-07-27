@@ -27,7 +27,8 @@ from dataset.pretrained_model_park.models.utils import Flatten
 
 def make_resnet(conv_layers=2, hidden_dim=32, in_dim=3, num_classes=10, activation='relu'):
     layers = []
-    activation_builder = nn.ReLU
+    activation_builder = {'relu': nn.ReLU,
+                          'gelu': nn.GELU}[activation]
     norm_builder = nn.BatchNorm2d
 
     layers.append(nn.Conv2d(in_dim, hidden_dim // 2, 5))
