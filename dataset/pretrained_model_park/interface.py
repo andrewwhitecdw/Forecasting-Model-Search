@@ -28,8 +28,11 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class PretrainedModelParkInterface:
-    def __init__(self, dataset_type='cifar10'):
-        self.data_directory = os.path.join(os.path.dirname(__file__), 'training_data')
+    def __init__(self, data_directory=None, dataset_type='cifar10'):
+        if data_directory is not None:
+            self.data_directory = data_directory
+        else:
+            self.data_directory = os.path.join(os.path.dirname(__file__), 'training_data')
         self.dataset_type = dataset_type
         self.hp_csv_path = os.path.join(self.data_directory, 'hyperparameters.csv')
         self.hp_df = pd.read_csv(self.hp_csv_path)
@@ -78,9 +81,11 @@ class PretrainedModelParkInterface:
             transforms.ToTensor(),
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
         ])
-        dataset_class = datasets.CIFAR10 if self.dataset_type == 'cifar10' else datasets.SVHN
         dataset_path = os.path.join(self.data_directory, self.dataset_type)
-        dataset = dataset_class(root=dataset_path, train=True, download=True, transform=transform)
+        if self.dataset_type == 'cifar10':
+            dataset = datasets.CIFAR10(root=dataset_path, train=True, download=True, transform=transform)
+        else:
+            dataset = datasets.SVHN(root=dataset_path, split='train', download=True, transform=transform)
         return DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
     def simulate(self, hp_index, epoch):
@@ -197,7 +202,7 @@ class PretrainedModelParkInterface:
         best_config_key = next(iter(best_configs))  # Gets the first key in the dictionary
         best_performance = best_configs[best_config_key][metric]
 
-        regret = best_performance - best_seen_performance
+        regret = best_seen_performance - best_performance if minimize else best_performance - best_seen_performance
         return regret
 
     def get_ground_truth_rankings(self, metric='test_accuracy', epoch=None, minimize=False):
@@ -241,5 +246,5 @@ if __name__ == "__main__":
     print("Best configurations:", best_configs)
     regret = interface.calculate_regret(0.95, 'test_accuracy')
     print("Regret:", regret)
-    performance_curve = interface.get_performance_curve(0, 'test_accuracy')
+    performance_curve = interface.get_performance_curve(0, 'test_accuracy', 19)
     print("Performance curve:", performance_curve)
