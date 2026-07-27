@@ -3,7 +3,7 @@
 wandb==0.15.3
 einops==0.6.1
 tqdm==4.64.1
-# pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.3.0+cu118.html900
+# pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.3.0+cu118.html
 # torch_geometric==2.3.1
 # torch-cluster==1.6.1 # pip install torch-cluster -f https://data.pyg.org/whl/torch-2.0.0+cu118.html
 # torch-scatter==2.1.1
