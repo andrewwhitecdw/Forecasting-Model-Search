@@ -15,8 +15,8 @@ python fms.py --ablate-cnn
 # on pretrained_model_park
 python fms.py --park pretrained_model_park_cifar10
 python fms.py --park pretrained_model_park_svhn
-python fms.py ---park pretrained_model_park_transfer_cifar10 --ablate-cnn
-python fms.py ---park pretrained_model_park_transfer_svhn --ablate-cnn
+python fms.py --park pretrained_model_park_cifar10 --ablate-cnn
+python fms.py --park pretrained_model_park_svhn --ablate-cnn
 
 # assessing transfer performance
 python fms.py --park pretrained_model_park_transfer_cifar10
