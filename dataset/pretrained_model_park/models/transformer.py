@@ -33,7 +33,8 @@ class PositionwiseFeedForward(nn.Module):
         self.lin1 = nn.Linear(d_model, d_ff)
         self.lin2 = nn.Linear(d_ff, d_model)
         self.dropout = nn.Dropout(dropout)
-        self.activation = nn.ReLU()
+        self.activation = {'relu': nn.ReLU,
+                            'gelu': nn.GELU}[activation]()
         
     def forward(self, x):
         return x + self.lin2(self.dropout(self.activation(self.lin1(x))))
