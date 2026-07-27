@@ -451,8 +451,6 @@ def get_feature_extractor(experiment_type):
         return FlatFeatureExtractor
     elif experiment_type == "dyhpo":
         return DyHpoFeatureExtractor
-    elif experiment_type == "random-search":
-        return RandomSearchSurrogateModel
 
 class FmsSurrogateModel():
     """The GP + Feature Extractor model."""
