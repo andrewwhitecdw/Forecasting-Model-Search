@@ -121,6 +121,7 @@ def arch_to_graph(arch, self_loops=False):
             else:
                 raise ValueError('Invalid norm type')
             ret = norm_to_graph(layer[1], layer[2], layer_num, in_neuron_idx, out_neuron, curr_idx, self_loops, norm_type=norm_type)
+            layer_num += 1
         elif layer[0] == BasicBlock:
             ret = basic_block_to_graph(layer[1:], layer_num, in_neuron_idx, out_neuron, curr_idx, self_loops)
             layer_num += 2
