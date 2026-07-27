@@ -34,7 +34,7 @@ If you find this code useful, please consider citing it:
   title={Improving Hyperparameter Optimization with Checkpointed Model Weights},
   author={Nikhil Mehta and Jonathan Lorraine and Steve Masson and Ramanathan Arunachalam and Zaid Pervaiz Bhat and James Lucas and Arun George Zachariah},
   journal={arXiv preprint arXiv:2406.18630},
-  url={https://arxiv.org/abs/2406.18630}
+  url={https://arxiv.org/abs/2406.18630},
   year={2024},
 }
 ```
