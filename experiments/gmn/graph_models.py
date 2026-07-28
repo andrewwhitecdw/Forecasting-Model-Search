@@ -45,17 +45,20 @@ class EdgeModel(nn.Module):
         return self.edge_mlp(out)
 
 class NodeModel(nn.Module):
-    def __init__(self, in_dim, out_dim, activation=True, reduce='mean', use_global=False):
+    def __init__(self, in_dim, out_dim, activation=True, reduce='mean', use_global=False, node_in_dim=None):
         super().__init__()
         self.reduce = reduce
         self.use_global = use_global
         assert not use_global, 'global not yet implemented'
+        if node_in_dim is None:
+            # Legacy fallback: assumes edge_dim == out_dim
+            node_in_dim = in_dim - out_dim
         if activation:
             self.node_mlp_1 = nn.Sequential(nn.Linear(in_dim, out_dim), nn.ReLU())
-            self.node_mlp_2 = nn.Sequential(nn.Linear(in_dim, out_dim), nn.ReLU())
+            self.node_mlp_2 = nn.Sequential(nn.Linear(node_in_dim + out_dim, out_dim), nn.ReLU())
         else:
             self.node_mlp_1 = nn.Sequential(nn.Linear(in_dim, out_dim))
-            self.node_mlp_2 = nn.Sequential(nn.Linear(in_dim, out_dim))
+            self.node_mlp_2 = nn.Sequential(nn.Linear(node_in_dim + out_dim, out_dim))
 
     def forward(self, x, edge_index, edge_attr, u, batch):
         # x: [N, F_x], where N is the number of nodes.
@@ -103,14 +106,14 @@ class EdgeMPNN(nn.Module):
             self.convs.append(MetaLayer(edge_model=edge_model))
         else:
             edge_model = EdgeModel(edge_in_dim+node_in_dim*2, hidden_dim) 
-            node_model = NodeModel(node_in_dim+hidden_dim, hidden_dim, reduce=self.reduce)
+            node_model = NodeModel(node_in_dim+hidden_dim, hidden_dim, node_in_dim=node_in_dim, reduce=self.reduce)
             #global_model = 
             self.convs.append(MetaLayer(edge_model=edge_model, node_model=node_model))
             self.node_norms.append(nn.BatchNorm1d(hidden_dim))
             self.edge_norms.append(nn.BatchNorm1d(hidden_dim))
             for _ in range(num_layers-2):
                 edge_model = EdgeModel(3*hidden_dim, hidden_dim) 
-                node_model = NodeModel(2*hidden_dim, hidden_dim, reduce=self.reduce)
+                node_model = NodeModel(2*hidden_dim, hidden_dim, node_in_dim=hidden_dim, reduce=self.reduce)
                 self.convs.append(MetaLayer(edge_model=edge_model, node_model=node_model))
                 self.node_norms.append(nn.BatchNorm1d(hidden_dim))
                 self.edge_norms.append(nn.BatchNorm1d(hidden_dim))
