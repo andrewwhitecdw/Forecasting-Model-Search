@@ -126,11 +126,10 @@ def main(start_idx=0):
     df_configs = pd.DataFrame(configs)
     df_configs.to_csv(os.path.join(DATA_DIR, 'hyperparameters.csv'), index=False)
 
-    train_loaders = get_dataloaders(64, train=True)
-    test_loaders = get_dataloaders(64, train=False)
-
     for config in configs:
         if config['hp_index'] >= start_idx:
+            train_loaders = get_dataloaders(config['batch_size'], train=True)
+            test_loaders = get_dataloaders(config['batch_size'], train=False)
             model = architectures[config['architecture']]()  # call the lambda function here
             logging.info(f"Training configuration {config['hp_index']}: {config['architecture']} with lr={config['learning_rate']}, weight_decay={config['weight_decay']}, momentum={config['momentum']}, batch_size={config['batch_size']}")
             train_and_evaluate(model, train_loaders, test_loaders, device, 20, config['learning_rate'], config['weight_decay'], config['momentum'], config['architecture'], config['hp_index'])
