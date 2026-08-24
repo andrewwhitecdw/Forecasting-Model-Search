@@ -1234,7 +1234,7 @@ class RandomSearchSurrogateModel:
 
     def suggest_next_hp_index(self, used_indices):
         """Randomly suggest a new hyperparameter index from available indices."""
-        available_configs = [idx for idx in self.available_indices if used_indices[idx] < self.data_interface.max_budget]
+        available_configs = [idx for idx in self.available_indices if used_indices.get(idx, 0) < self.data_interface.max_budget]
         if not available_configs:
             raise Exception("No more unique configurations to suggest.")
         index = random.choice(available_configs)
