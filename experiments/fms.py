@@ -52,7 +52,7 @@ class ExperimentController:
             # adjust based on whether you are minimizing or maximizing (e.g. loss or accuracy)
             'best_performance': float('-inf'),
             'best_performance_history': [],
-            'timestamps': []  # timestamps when the best changes
+            'time_stamps': []  # timestamps when the best changes
         }
 
     def suggest_config(self):
